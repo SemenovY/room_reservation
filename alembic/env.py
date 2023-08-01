@@ -1,15 +1,35 @@
+"""
+Теперь все новые модели нужно будет импортировать в файл app/core/base.py.
+
+Вся работа будет вестись в директории /app,
+а в настройки Alembic при добавлении новых моделей больше ничего дописывать
+не потребуется.
+"""
 import asyncio
+import os
 from logging.config import fileConfig
 
+from dotenv import load_dotenv # noqa
+from sqlalchemy import engine_from_config  # noqa
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlalchemy.ext.asyncio import AsyncEngine  # noqa
+from sqlalchemy.ext.asyncio import async_engine_from_config  # noqa
 
 from alembic import context
+from app.core.base import Base # noqa
+
+# Загрузим файл .env в переменные окружения.
+# Библиотека python-dotenv умеет находить файл в «вышестоящих» каталогах,
+# поэтому полный путь указывать не обязательно.
+load_dotenv('.env')
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Установим для переменной sqlalchemy.url значение из нашего .env файла.
+config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -18,9 +38,9 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+# Присвоим переменной target_metadata объект класса MetaData из Base.
+target_metadata = Base.metadata
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
