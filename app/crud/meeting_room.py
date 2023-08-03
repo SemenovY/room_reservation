@@ -9,6 +9,7 @@
 Pydantic-схемы в ORM-модель — потребуется конвертировать схему в словарь.
 """
 from typing import Optional
+
 # Добавляем импорт функции select.
 from sqlalchemy import select
 # Импортируем класс асинхронной сессии для аннотаций.
@@ -16,7 +17,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.meeting_room import MeetingRoom
 from app.schemas.meeting_room import MeetingRoomCreate
-
 
 
 # Функция работает с асинхронной сессией,
@@ -70,7 +70,6 @@ async def get_room_id_by_name(
     цель — просто узнать, есть ли в базе такой объект.
     Если в базе нет одноимённой переговорки — функция вернёт None.
     """
-
     db_room_id = await session.execute(
         select(MeetingRoom.id).where(
             MeetingRoom.name == room_name
@@ -79,3 +78,11 @@ async def get_room_id_by_name(
     # Извлекаем из него конкретное значение.
     db_room_id = db_room_id.scalars().first()
     return db_room_id
+
+
+async def read_all_rooms_from_db(
+        session: AsyncSession,
+) -> list[MeetingRoom]:
+    """Асинхронная функция, которая будет считывать из базы все переговорки."""
+    db_rooms = await session.execute(select(MeetingRoom))
+    return db_rooms.scalars().all()

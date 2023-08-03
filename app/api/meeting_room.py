@@ -9,7 +9,7 @@ create_meeting_room() и поэтому сама тоже должна быть 
 """
 # Импортируем асинхронный генератор сессий.
 from app.core.db import get_async_session
-from app.crud.meeting_room import create_meeting_room, get_room_id_by_name
+from app.crud.meeting_room import create_meeting_room, get_room_id_by_name, read_all_rooms_from_db
 from app.schemas.meeting_room import MeetingRoomCreate, MeetingRoomDB
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -17,7 +17,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-router = APIRouter()
+# Добавьте параметр prefix.
+router = APIRouter(
+    prefix='/meeting_rooms',
+    tags=['Meeting Rooms']
+)
 
 # В пути /meeting_rooms/ стоит закрывающий слеш, и это неспроста:
 # позже мы опишем эндпоинты для обновления и удаления объектов,
@@ -28,7 +32,7 @@ router = APIRouter()
 
 
 @router.post(
-    '/meeting_rooms/',
+    '/',
     # Указываем схему ответа.
     response_model=MeetingRoomDB,
     # Не выводим пустые поля и дефолт
@@ -47,7 +51,6 @@ async def create_new_meeting_room(
 
     Роутер подключим его к объекту приложения.
     """
-
     # Вторым параметром передаём сессию в CRUD-функцию:
     # Вызываем функцию проверки уникальности поля name:
 
@@ -62,3 +65,16 @@ async def create_new_meeting_room(
     # Вторым параметром передаём сессию в CRUD-функцию:
     new_room = await create_meeting_room(meeting_room, session)
     return new_room
+
+
+@router.get(
+    '/',
+    response_model=list[MeetingRoomDB],
+    response_model_exclude_none=True,
+)
+async def get_all_meeting_rooms(
+        session: AsyncSession = Depends(get_async_session)
+):
+    """Для гет запроса на возврат всех комнат."""
+    all_rooms = await read_all_rooms_from_db(session)
+    return all_rooms
