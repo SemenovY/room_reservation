@@ -15,9 +15,6 @@ class Settings(BaseSettings):
     окружения, напрямую обращаться к файлу .env.
     """
 
-    # app_author: str
-    # db_url: str = 'postgres://login:password@127.0.0.1:5432/room_reservation'
-    # path: str
     app_title: str = 'Бронирование переговорок'
     description: str = 'API для возможности забронировать переговорку'
     database_url: str
@@ -34,6 +31,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-# kaonashi
-# =^..^=______/

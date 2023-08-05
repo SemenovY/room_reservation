@@ -1,10 +1,9 @@
 """Pydantic схемы для переговорки, для Post and Get запросов."""
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
-# Базовый класс схемы, от которого наследуем все остальные.
 class MeetingRoomBase(BaseModel):
     """Создадим базовый класс схемы комнаты."""
 
@@ -21,7 +20,6 @@ class MeetingRoomCreate(MeetingRoomBase):
     )
 
 
-# Новый класс для обновления объектов.
 class MeetingRoomUpdate(MeetingRoomBase):
     """
     Обновлять можно каждое поле в отдельности или оба поля сразу.
@@ -30,7 +28,12 @@ class MeetingRoomUpdate(MeetingRoomBase):
     напишем pass.
     """
 
-    pass
+    @validator('name')
+    def name_cannot_be_null(cls, value: str):
+        """Create test for None value."""
+        if value is None:
+            raise ValueError('Имя переговорки не может быть пустым!')
+        return value
 
 
 class MeetingRoomDB(MeetingRoomCreate):

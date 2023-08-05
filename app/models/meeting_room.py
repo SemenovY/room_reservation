@@ -1,6 +1,10 @@
 """Описание моделей проекта."""
 from sqlalchemy import Column, String, Text # noqa
-# Импортируем базовый класс для моделей.
+# атрибут relationship, описывающий взаимосвязи между моделями,
+# по которому можно будет получить все объекты бронирования
+# для данной переговорки
+from sqlalchemy.orm import relationship
+
 from app.core.db import Base
 
 
@@ -12,6 +16,8 @@ class MeetingRoom(Base):
     """
 
     name = Column(String(100), unique=True, nullable=False)
-    # Новый атрибут модели. Значение nullable по умолчанию равно True,
-    # поэтому его можно не указывать.
     description = Column(Text)
+    # Установите связь между моделями через функцию relationship.
+    reservations = relationship('Reservation', cascade='delete')
+    # Теперь при удалении объекта переговорки SQLAlchemy удалит
+    # все объекты бронирования, связанные с этой переговоркой.
