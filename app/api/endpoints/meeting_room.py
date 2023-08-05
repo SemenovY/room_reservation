@@ -7,17 +7,17 @@
 create_meeting_room() и поэтому сама тоже должна быть асинхронной:
 в ней тоже нужно применить ключевые слова async и await.
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
 # Вместо импортов 6 функций импортируйте объект meeting_room_crud.
 from app.crud.meeting_room import meeting_room_crud
-from app.models.meeting_room import MeetingRoom
 from app.schemas.meeting_room import (
     MeetingRoomCreate, MeetingRoomDB, MeetingRoomUpdate
 )
+from app.api.validators import check_meeting_room_exists, check_name_duplicate
 
 router = APIRouter()
 
@@ -111,39 +111,4 @@ async def remove_meeting_room(
     meeting_room = await check_meeting_room_exists(meeting_room_id, session)
     # Замените вызов функции на вызов метода.
     meeting_room = await meeting_room_crud.remove(meeting_room, session)
-    return meeting_room
-
-
-async def check_name_duplicate(
-        # Корутина, проверяющая уникальность полученного имени переговорки.
-        room_name: str,
-        session: AsyncSession,
-) -> None:
-    """Проверка в базе на совпадение имен."""
-    # Замените вызов функции на вызов метода.
-    room_id = await meeting_room_crud.get_room_id_by_name(room_name, session)
-    if room_id is not None:
-        raise HTTPException(
-            status_code=422,
-            detail='Переговорка с таким именем уже существует!',
-        )
-
-
-async def check_meeting_room_exists(
-    # Оформляем повторяющийся код в виде отдельной корутины.
-    meeting_room_id: int,
-    session: AsyncSession,
-) -> MeetingRoom:
-    """
-    Отдельная функция для проверки повторяющегося id.
-    :param meeting_room_id:
-    :param session:
-    """
-    # Замените вызов функции на вызов метода.
-    meeting_room = await meeting_room_crud.get(meeting_room_id, session)
-    if meeting_room is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Переговорка не найдена!'
-        )
     return meeting_room
