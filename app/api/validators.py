@@ -1,8 +1,12 @@
+
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.meeting_room import meeting_room_crud
-from app.models.meeting_room import MeetingRoom
+from app.crud.reservation import reservation_crud
+# Так как в Python-пакете app.models модели импортированы в __init__.py,
+# импортировать их можно прямо из пакета.
+from app.models import MeetingRoom, Reservation
 
 
 async def check_name_duplicate(
@@ -33,8 +37,42 @@ async def check_meeting_room_exists(
     # Замените вызов функции на вызов метода.
     meeting_room = await meeting_room_crud.get(meeting_room_id, session)
     if meeting_room is None:
-        raise HTTPException(
-            status_code=404,
-            detail='Переговорка не найдена!'
-        )
+        raise HTTPException(status_code=404, detail='Переговорка не найдена!')
     return meeting_room
+
+
+async def check_reservation_intersections(**kwargs) -> None:
+    """
+    Этот валидатор должен:
+    принимать неопределенный список ключевых аргументов **kwargs;
+    вызывать метод get_reservations_at_the_same_time()
+    объекта reservation_crud, при вызове метода передавать в него
+    распакованный **kwargs, результат вызова должен быть присвоен
+    переменной reservations;
+    если список reservations непустой — выбрасывать исключение
+    HTTPException со статусом 422 и в сообщении об ошибке возвращать
+    полученный список объектов;
+    если список reservations пустой — ничего возвращать не надо.
+    """
+    reservations = await reservation_crud.get_reservations_at_the_same_time(
+        **kwargs
+    )
+    if reservations:
+        raise HTTPException(status_code=422, detail=str(reservations))
+
+
+async def check_reservation_before_edit(
+        reservation_id: int,
+        session: AsyncSession,
+) -> Reservation:
+    """
+    Будем проверять, существует ли запрошенный объект бронирования,
+    а чуть позже добавим к нему условия, связанные с пользователями.
+    """
+    reservation = await reservation_crud.get(
+        # Для понятности кода можно передавать аргументы по ключу.
+        obj_id=reservation_id, session=session
+    )
+    if not reservation:
+        raise HTTPException(status_code=404, detail='Бронь не найдена!')
+    return reservation
