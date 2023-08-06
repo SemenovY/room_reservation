@@ -1,7 +1,7 @@
 """Pydantic схемы для резервирования времени, для Post and Get запросов."""
 from datetime import datetime
 
-from pydantic import BaseModel, root_validator, validator
+from pydantic import BaseModel, Extra, root_validator, validator
 
 
 class ReservationBase(BaseModel):
@@ -9,6 +9,20 @@ class ReservationBase(BaseModel):
 
     from_reserve: datetime
     to_reserve: datetime
+
+    class Config:
+        """
+        Чтобы запретить пользователю передавать параметры,
+        не описанные в схеме, в подклассе Config устанавливается
+        значение extra = Extra.forbid.
+        """
+
+        extra = Extra.forbid
+        # Теперь схемы, унаследованные от ReservationBase, не будут
+        # принимать параметры, которые не описаны в схеме.
+        # extra = Extra.forbid — крайне полезный атрибут, который
+        # делает поведение API более понятным для пользователя и
+        # позволяет бороться со случайными опечатками при передаче параметров.
 
 
 class ReservationUpdate(ReservationBase):
@@ -27,7 +41,7 @@ class ReservationUpdate(ReservationBase):
 
     @root_validator(skip_on_failure=True)
     def check_from_reserve_before_to_reserve(cls, values):
-        """Сравниваем время начало и окончания резерва."""
+        """Сравниваем время начала и окончания резерва."""
         if values['from_reserve'] >= values['to_reserve']:
             raise ValueError(
                 'Время начала бронирования '
