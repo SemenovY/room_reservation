@@ -67,6 +67,25 @@ class CRUDReservation(CRUDBase):
         reservations = reservations.scalars().all()
         return reservations
 
+    async def get_future_reservations_for_room(
+            self,
+            room_id: int,
+            session: AsyncSession
+    ):
+        """
+        Запрос к БД должен извлекать все объекты Reservation,
+        которые связаны с запрошенной переговоркой; время окончания
+        бронирования у этих объектов должно быть больше текущего времени.
+        """
+        reservations = await session.execute(
+            select(Reservation).where(
+                Reservation.meetingroom_id == room_id,
+                Reservation.to_reserve > datetime.now()
+            )
+        )
+        reservations = reservations.scalars().all()
+        return reservations
+
 
 # Создаём объекта класса CRUDReservation.
 reservation_crud = CRUDReservation(Reservation)
