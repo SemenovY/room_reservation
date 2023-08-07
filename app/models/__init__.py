@@ -11,3 +11,10 @@ reservations = relationship('Reservation', ...) вызывается модел�
 """
 from .meeting_room import MeetingRoom
 from .reservation import Reservation
+# app/models/__init__.py
+# Чтобы SQLAlchemy узнала обо всех моделях до того, как начнутся выстраиваться
+# взаимосвязи между ними, импортируйте модель User в
+# файл app/models/__init__.py:
+from .meeting_room import MeetingRoom
+from .reservation import Reservation
+from .user import User

@@ -11,7 +11,7 @@
 from fastapi import APIRouter
 
 # Две длинных строчки импортов заменяем на одну короткую.
-from app.api.endpoints import meeting_room_router, reservation_router
+from app.api.endpoints import meeting_room_router, reservation_router, user_router
 
 
 main_router = APIRouter()
@@ -21,6 +21,10 @@ main_router.include_router(
 main_router.include_router(
     reservation_router, prefix='/reservations', tags=['Reservations']
 )
+# Префиксы и теги роутеров библиотеки FastAPI Users описаны в файле
+# app/api/endpoints/user.py, так что в файле app/api/routers.py будет
+# только подключение, и никаких дополнительных параметров.
+main_router.include_router(user_router)
 
 # Из файла app/api/routers.py можно управлять тегами и префиксами роутеров:
 # их можно указывать не только в объекте APIRouter,

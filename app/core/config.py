@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     app_title: str = 'Бронирование переговорок'
     description: str = 'API для возможности забронировать переговорку'
     database_url: str
+    secret: str = 'SECRET'
 
     class Config:
         """

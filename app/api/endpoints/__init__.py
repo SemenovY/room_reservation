@@ -13,3 +13,4 @@ from .reservation import router as reservation_router
 # применить относительные адреса, а не абсолютные.
 # Теперь объекты роутеров будут доступны непосредственно
 # из пакета app/api/endpoints.
+from .user import router as user_router  # noqa
