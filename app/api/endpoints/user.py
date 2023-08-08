@@ -1,5 +1,5 @@
 # app/api/endpoints/user.py
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
@@ -23,3 +23,26 @@ router.include_router(
     prefix='/users',
     tags=['users'],
 )
+
+
+# В самом конце файла допишите свой эндпоинт.
+@router.delete(
+    # Путь и тег полностью копируют параметры эндпоинта по умолчанию.
+    '/users/{id}',
+    tags=['users'],
+    # Параметр, который показывает, что метод устарел.
+    deprecated=True
+)
+def delete_user(id: str):
+    """Не используйте удаление, деактивируйте пользователей."""
+    raise HTTPException(
+        # 405 ошибка - метод не разрешен.
+        status_code=405,
+        detail="Удаление пользователей запрещено!"
+    )
+# Запрет на удаление пользователей через API
+# Чтобы никто, даже суперпользователь, не мог отправить запрос на удаление
+# пользователя, нужно переопределить эндпоинт удаления пользователя. Удалить
+# этот эндпоинт без серьёзного вмешательства в устройство библиотеки не
+# получится, но если просто переопределить его — нужный результат будет
+# достигнут.

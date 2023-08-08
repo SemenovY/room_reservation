@@ -13,7 +13,9 @@ from app.api.validators import (
     check_reservation_intersections,
 )
 from app.core.db import get_async_session
+from app.core.user import current_user
 from app.crud.reservation import reservation_crud
+from app.models import User
 from app.schemas.reservation import (ReservationCreate, ReservationDB,
                                      ReservationUpdate
                                      )
@@ -32,7 +34,9 @@ router = APIRouter()
 )
 async def create_reservation(
     reservation: ReservationCreate,
-    session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session),
+    # Получаем текущего пользователя и сохраняем в переменную user.
+    user: User = Depends(current_user),
 ):
     """
     В теле корутины последовательно должны вызываться проверки:
@@ -51,7 +55,10 @@ async def create_reservation(
         # аргументы должны быть переданы с указанием ключей.
         **reservation.dict(), session=session
     )
-    new_reservation = await reservation_crud.create(reservation, session)
+    new_reservation = await reservation_crud.create(
+        # Передаём объект пользователя в метод создания объекта бронирования.
+        reservation, session, user
+    )
     return new_reservation
 
 
@@ -105,7 +112,8 @@ async def update_reservation(
     )
     reservation = await reservation_crud.update(
         db_obj=reservation,
-        # На обновление передаем объект класса ReservationUpdate, как и требуется.
+        # На обновление передаем объект класса ReservationUpdate,
+        # как и требуется.
         obj_in=obj_in,
         session=session,
     )
