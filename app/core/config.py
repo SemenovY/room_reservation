@@ -4,7 +4,9 @@
 Будет хранить файлы, отвечающие за «ядро» проекта — общие настройки приложения,
 файлы для работы с БД и другие файлы, отвечающие за конфигурацию проекта.
 """
-from pydantic import BaseSettings
+from typing import Optional
+
+from pydantic import BaseSettings, EmailStr
 
 
 class Settings(BaseSettings):
@@ -19,6 +21,11 @@ class Settings(BaseSettings):
     description: str = 'API для возможности забронировать переговорку'
     database_url: str
     secret: str = 'SECRET'
+    # Немного модифицируем пример из документации и настроим проект так,
+    # чтобы при запуске приложения создавался суперюзер, если его еще нет
+    # в системе.
+    first_superuser_email: Optional[EmailStr] = None
+    first_superuser_password: Optional[str] = None
 
     class Config:
         """

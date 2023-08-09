@@ -12,8 +12,6 @@ o
 ?alembic/versions/5734caa998e3_add_description_to_meetingroom.py,6/d/6d474ca1715f98c6f37145e91f2babcaac9e5148
 f
 6alembic/versions/0e7e4bdc87a2_add_reservation_model.py,0/9/09774a53951eab6047952cf47a380845fd1f6b5f
-;
-app/main.py,6/0/60a964aea4a6760d2f0fe80a7725ed9d569edd6c
 ?
 app/__init__.py,6/b/6b5a07a517e9a3845a279675e888c81b77b9d712
 G
@@ -32,20 +30,12 @@ F
 app/models/__init__.py,8/9/89985a72863407ec537059cd31903ef25133c043
 D
 app/core/__init__.py,a/3/a3fe4ad76591e830f11671ae24cd80338af95756
-@
-app/core/base.py,c/3/c3358b7b98eea932228609a30eadd78e4619a1e3
-4
-.env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
-B
-app/core/config.py,3/e/3ea8c6f2db8d36bfa54152fe8e383f5d5a7f5369
 C
 app/schemas/user.py,1/5/15b1b2046b58bdfc77d87fe0febe742f13175713
 B
 app/models/user.py,a/b/abbc0b43e8cc22de5b955991568d71f2a331ea33
 C
 app/api/__init__.py,4/0/407bde4b68f04669686373519bb18966abda13b9
-@
-app/core/user.py,2/6/2628fb72e1e5c15af1c37041cc1ffd1e178cc317
 M
 app/api/endpoints/__init__.py,5/3/53f74166a0a52796a7e4b699d309f3f15ff1001d
 B
