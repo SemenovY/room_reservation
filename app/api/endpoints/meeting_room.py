@@ -21,6 +21,10 @@ from app.schemas.meeting_room import (
 from app.schemas.reservation import ReservationDB
 from app.api.validators import check_meeting_room_exists, check_name_duplicate
 
+# Добавьте импорт зависимости, определяющей,
+# что текущий пользователь - суперюзер.
+from app.core.user import current_superuser
+
 router = APIRouter()
 
 
@@ -32,15 +36,23 @@ router = APIRouter()
     # response_model_exclude_defaults=True,
     response_model=MeetingRoomDB,
     response_model_exclude_none=True,
-
+    # Добавьте вызов зависимости при обработке запроса.
+    dependencies=[Depends(current_superuser)],
 )
 async def create_new_meeting_room(
         meeting_room: MeetingRoomCreate,
         # Указываем зависимость, предоставляющую объект сессии,
         # как параметр функции.
         session: AsyncSession = Depends(get_async_session),
+        # Разница в том, что корутине create_reservation() нужен объект
+        # пользователя (параметр user) внутри кода — ведь поле id из этого
+        # объекта нужно записать в БД вместе с остальной информацией о
+        # бронировании; а вот корутине create_new_meeting_room() объект
+        # user не нужен — ведь требуется только проверить, что пользователь
+        # обладает нужными правами.
 ):
     """
+    Только для суперюзеров.
     Создаем новую комнату.
     Роутер подключим его к объекту приложения.
     Вызываем функцию проверки уникальности поля name:
@@ -55,11 +67,15 @@ async def create_new_meeting_room(
     '/',
     response_model=list[MeetingRoomDB],
     response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def get_all_meeting_rooms(
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Для гет запроса на возврат всех комнат."""
+    """
+    Для гет запроса на возврат всех комнат.
+    Только для суперюзеров.
+    """
     # Замените вызов функции на вызов метода.
     all_rooms = await meeting_room_crud.get_multi(session)
     return all_rooms
@@ -70,6 +86,7 @@ async def get_all_meeting_rooms(
     '/{meeting_room_id}',
     response_model=MeetingRoomDB,
     response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def partially_update_meeting_room(
         # ID обновляемого объекта.
@@ -80,7 +97,7 @@ async def partially_update_meeting_room(
 ):
     """
     Обновляем объект в базе, роутер path.
-
+    Только для суперюзеров.
     Получаем объект из БД по ID.
     В ответ ожидается либо None, либо объект класса MeetingRoom.
     Выносим повторяющийся код в отдельную корутину.
@@ -101,6 +118,7 @@ async def partially_update_meeting_room(
     '/{meeting_room_id}',
     response_model=MeetingRoomDB,
     response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)],
 )
 async def remove_meeting_room(
         meeting_room_id: int,
@@ -108,6 +126,7 @@ async def remove_meeting_room(
 ):
     """
     Удаляем комнату, по id.
+    Только для суперюзеров.
     Выносим повторяющийся код в отдельную корутину.
     """
     meeting_room = await check_meeting_room_exists(meeting_room_id, session)
@@ -118,7 +137,9 @@ async def remove_meeting_room(
 
 @router.get(
     '/{meeting_room_id}/reservations',
-    response_model=list[ReservationDB]
+    response_model=list[ReservationDB],
+    # Добавляем множество с полями, которые надо исключить из ответа.
+    response_model_exclude={'user_id'},
 )
 async def get_reservations_for_room(
         meeting_room_id: int,

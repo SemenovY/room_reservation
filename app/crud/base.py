@@ -3,9 +3,12 @@
 для CRUD-операций с определёнными моделями.
 А обращаться будем уже не к функциям, а к методам этого класса.
 """
+from typing import Optional
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import User
 
 
 class CRUDBase:
@@ -31,7 +34,13 @@ class CRUDBase:
         db_objs = await session.execute(select(self.model))
         return db_objs.scalars().all()
 
-    async def create(self, obj_in, session: AsyncSession,):
+    async def create(
+            self,
+            obj_in,
+            session: AsyncSession,
+            # Добавьте опциональный параметр user.
+            user: Optional[User] = None
+    ):
         """
         Получаем объект джейсончик, вся работа через асинхронку.
 
@@ -41,6 +50,10 @@ class CRUDBase:
         # Конвертируем объект в словарь.
         # может быть превращён в словарь методом Pydantic-модели.
         obj_in_data = obj_in.dict()
+        # Если пользователь был передан...
+        if user is not None:
+            # ...то дополнить словарь для создания модели.
+            obj_in_data['user_id'] = user.id
         # Создаём объект модели MeetingRoom.
         # В параметры передаём пары "ключ=значение",
         # для этого распаковываем словарь.

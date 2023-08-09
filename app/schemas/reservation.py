@@ -1,5 +1,6 @@
 """Pydantic схемы для резервирования времени, для Post and Get запросов."""
 from datetime import datetime, timedelta
+from typing import Optional
 
 from pydantic import BaseModel, Extra, Field, root_validator, validator
 
@@ -66,10 +67,18 @@ class ReservationCreate(ReservationUpdate):
 
 
 class ReservationDB(ReservationBase):
-    """Возвращаем ответ после создания комнаты."""
+    """
+    Возвращаем ответ после создания комнаты.
+    Чтобы id пользователя возвращался в ответе на запрос, нужно дополнить
+    схему ReservationDB. В базе уже могут быть объекты бронирования
+    без id пользователя, так что сделаем новое поле схемы опциональным.
+
+    """
 
     id: int
     meetingroom_id: int
+    # Добавьте опциональное поле user_id.
+    user_id: Optional[int]
 
     class Config:
         """
