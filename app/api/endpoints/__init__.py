@@ -7,6 +7,7 @@
 этот подход в своих проектах.
 """
 # app/api/endpoints/__init__.py
+from .google_api import router as google_api_router
 from .meeting_room import router as meeting_room_router
 from .reservation import router as reservation_router
 # Как и при импорте моделей в файл app/models/__init__.py, здесь уместно

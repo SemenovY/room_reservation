@@ -10,8 +10,6 @@ o
 ?alembic/versions/5734caa998e3_add_description_to_meetingroom.py,6/d/6d474ca1715f98c6f37145e91f2babcaac9e5148
 f
 6alembic/versions/0e7e4bdc87a2_add_reservation_model.py,0/9/09774a53951eab6047952cf47a380845fd1f6b5f
-?
-app/__init__.py,6/b/6b5a07a517e9a3845a279675e888c81b77b9d712
 G
 app/schemas/__init__.py,7/5/7501a9306d02b3a60f7536482442b11b2a950344
 D
@@ -32,12 +30,8 @@ C
 app/schemas/user.py,1/5/15b1b2046b58bdfc77d87fe0febe742f13175713
 B
 app/models/user.py,a/b/abbc0b43e8cc22de5b955991568d71f2a331ea33
-M
-app/api/endpoints/__init__.py,5/3/53f74166a0a52796a7e4b699d309f3f15ff1001d
 C
 app/api/__init__.py,4/0/407bde4b68f04669686373519bb18966abda13b9
-B
-app/api/routers.py,e/5/e5d69fbb9e2968ee08c1e9507d6487d9213764ef
 _
 /alembic/versions/1f6926b05dcb_add_user_model.py,d/c/dcf813c01a71983890a50352fd037983e12c2639
 I
@@ -48,10 +42,6 @@ u
 Ealembic/versions/203571a010cc_add_user_relationship_to_reservation.py,e/f/eff34f9c9f3ea6d0fee256d1a4a3e3340a8f0165
 @
 app/crud/base.py,5/a/5afee768463b00afa87804306c2eceb8b0c6dad7
-Q
-!app/api/endpoints/meeting_room.py,c/6/c63c75009f8b894e8b4dbc40a31ab69d4d3482b9
-G
-app/crud/reservation.py,9/0/9016a65ca6f4339fecc9b14c27fa665295529a44
 I
 app/models/reservation.py,d/7/d775ff2542458e1cb8f77851ac1eecfac70e639d
 J
@@ -60,10 +50,6 @@ E
 app/api/validators.py,7/0/70c723bac2574dfd6016c8375800a944ef36bc42
 P
  app/api/endpoints/reservation.py,d/b/db317644eb7c0e0a425e704b33c8fab07237fb73
-B
-app/core/config.py,3/e/3ea8c6f2db8d36bfa54152fe8e383f5d5a7f5369
-4
-.env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
 @
 app/core/base.py,c/3/c3358b7b98eea932228609a30eadd78e4619a1e3
 C
